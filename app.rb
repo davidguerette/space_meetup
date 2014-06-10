@@ -55,8 +55,6 @@ end
 get '/sign_out' do
   session[:user_id] = nil
   flash[:notice] = "You have been signed out."
-
-  redirect '/'
 end
 
 get '/example_protected_page' do
@@ -64,15 +62,21 @@ get '/example_protected_page' do
 end
 
 get '/submit_event' do
-
   erb :submit_event
 end
 
-post '/submit_event' do
+post '/events/:event_id/attendees' do
+  @event = Event.find(params[:event_id])
+  @user = id.current_user
 
+  Attendee.create(user_id: @user, event_id: @event)
+binding.pry
+  redirect "/events/#{@event.id}"
+end
+
+post '/submit_event' do
   Event.create(name: params["event_name"], location: params["location"], description: params["description"])
   event = Event.last
   id = event.id
-
   redirect "/events/#{id}"
 end
