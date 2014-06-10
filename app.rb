@@ -36,7 +36,7 @@ get '/' do
   erb :index
 end
 
-get '/:id' do
+get '/events/:id' do
   id = params[:id]
   @event = Event.find(id)
   erb :show
@@ -61,4 +61,18 @@ end
 
 get '/example_protected_page' do
   authenticate!
+end
+
+get '/submit_event' do
+
+  erb :submit_event
+end
+
+post '/submit_event' do
+
+  Event.create(name: params["event_name"], location: params["location"], description: params["description"])
+  event = Event.last
+  id = event.id
+
+  redirect "/events/#{id}"
 end
