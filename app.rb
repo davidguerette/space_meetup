@@ -30,6 +30,8 @@ def authenticate!
 end
 
 get '/' do
+  @events = Event.all
+
   erb :index
 end
 
