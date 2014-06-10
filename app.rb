@@ -30,18 +30,6 @@ def authenticate!
   end
 end
 
-get '/' do
-  @events = Event.all.sort_by {|event| event.name}
-
-  erb :index
-end
-
-get '/events/:id' do
-  id = params[:id]
-  @event = Event.find(id)
-  erb :show
-end
-
 get '/auth/github/callback' do
   auth = env['omniauth.auth']
 
@@ -49,7 +37,7 @@ get '/auth/github/callback' do
   set_current_user(user)
   flash[:notice] = "You're now signed in as #{user.username}!"
 
-  redirect '/'
+  redirect '/events'
 end
 
 get '/sign_out' do
@@ -65,12 +53,25 @@ get '/submit_event' do
   erb :submit_event
 end
 
+get '/events' do
+  @events = Event.all.sort_by {|event| event.name}
+  erb :index
+end
+
+get '/' do
+  redirect '/events'
+end
+
+get '/events/:id' do
+  id = params[:id]
+  @event = Event.find(id)
+  erb :show
+end
+
 post '/events/:event_id/attendees' do
   @event = Event.find(params[:event_id])
-  @user = id.current_user
-
-  Attendee.create(user_id: @user, event_id: @event)
-binding.pry
+  @user = session[:user_id]
+  Attendee.create(user_id: @user, event_id: @event.id)
   redirect "/events/#{@event.id}"
 end
 
