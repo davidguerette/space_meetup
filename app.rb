@@ -1,3 +1,4 @@
+require 'pry'
 require 'sinatra'
 require 'sinatra/activerecord'
 require 'sinatra/flash'
@@ -30,9 +31,15 @@ def authenticate!
 end
 
 get '/' do
-  @events = Event.all
+  @events = Event.all.sort_by {|event| event.name}
 
   erb :index
+end
+
+get '/:id' do
+  id = params[:id]
+  @event = Event.find(id)
+  erb :show
 end
 
 get '/auth/github/callback' do
