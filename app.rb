@@ -71,8 +71,15 @@ end
 post '/events/:event_id/attendees' do
   @event = Event.find(params[:event_id])
   @user = session[:user_id]
-  Attendee.create(user_id: @user, event_id: @event.id)
-  redirect "/events/#{@event.id}"
+
+  unless signed_in?
+    authenticate!("events/#{@event.id}")
+  else
+
+    Attendee.create(user_id: @user, event_id: @event.id)
+    flash[:notice] = "You have joined the event!"
+    redirect "/events/#{@event.id}"
+  end
 end
 
 post '/submit_event' do
@@ -82,6 +89,7 @@ post '/submit_event' do
     Event.create(name: params["event_name"], location: params["location"], description: params["description"])
     event = Event.last
     id = event.id
+    flash[:notice] = "Event created!"
     redirect "/events/#{id}"
   end
 end
