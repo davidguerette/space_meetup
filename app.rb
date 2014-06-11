@@ -23,10 +23,10 @@ def set_current_user(user)
   session[:user_id] = user.id
 end
 
-def authenticate!
+def authenticate!(page)
   unless signed_in?
     flash[:notice] = 'You need to sign in if you want to do that!'
-    redirect '/'
+    redirect "/#{page}"
   end
 end
 
@@ -76,8 +76,12 @@ post '/events/:event_id/attendees' do
 end
 
 post '/submit_event' do
-  Event.create(name: params["event_name"], location: params["location"], description: params["description"])
-  event = Event.last
-  id = event.id
-  redirect "/events/#{id}"
+  unless signed_in?
+    authenticate!("submit_event")
+  else
+    Event.create(name: params["event_name"], location: params["location"], description: params["description"])
+    event = Event.last
+    id = event.id
+    redirect "/events/#{id}"
+  end
 end
