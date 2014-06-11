@@ -10,3 +10,23 @@
 <form method="post" action="/events/<%= @event.id %>/attendees">
     <button type="submit">Join Event!</button>
 </form>
+
+<br />
+
+
+<table>
+  <thead>
+    <th>Attendees</th>
+  </thead>
+<tbody>
+
+  <% @attendees.each do |attendee| %>
+  <tr>
+    <td><img src="<%=attendee.avatar_url%>" height="100px" widht="100px"/></td>
+    <td><%= attendee.username %></td>
+  </tr>
+  <% end %>
+
+</tbody>
+
+</table>

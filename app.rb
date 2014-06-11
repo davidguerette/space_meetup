@@ -65,6 +65,7 @@ end
 get '/events/:id' do
   id = params[:id]
   @event = Event.find(id)
+  @attendees = @event.users
   erb :show
 end
 
